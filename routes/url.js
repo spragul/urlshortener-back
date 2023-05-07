@@ -2,9 +2,9 @@ const express = require("express");
 const shortid = require("shortid");
 const URL = require("../schemas/urlSchema");
 const router = express.Router();
-const {validation}=require('../common/auth')
 
-router.get("/list",validation,async (req, res)=> {
+
+router.get("/list",async (req, res)=> {
   const result = await URL.find({});
   if(!result){
     return res.status(500).json({message:"Internal Error"})
@@ -17,7 +17,7 @@ router.post("/", async (req, res)=>{
   const body = req.body;
   if (!body.url) return res.status(400).json({ error: "url is required" });
   const shortID = shortid();
-  let link =`http://localhost:9000/url/${shortID}`
+  let link =`https://urlshortener-3bwd.onrender.com/url/${shortID}`
 
   const data = await URL.create({
     shortId: shortID,
