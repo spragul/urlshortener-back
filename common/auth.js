@@ -20,7 +20,7 @@ const createToken = async(payload)=>{
 
 const validation = async(req,res,next)=>{
     
-    if(req.headers.authorization)
+    if(!req.headers.authorization)
     {
         let token = req.headers.authorization.split(" ")[1]
         console.log(token);
