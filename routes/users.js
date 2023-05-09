@@ -3,7 +3,7 @@ const router = express.Router();
 const { User, validate } = require('../schemas/userSchema')
 const mongoose = require('mongoose')
 const { dbUrl } = require('../common/dbConfig')
-const {hashPassword,hashCompare,createToken,validation} = require('../common/auth')
+const { hashPasswords, hashCompare, createToken, validation } = require('../common/auth')
 // const { validate } = require('../common/auth')
 const crypto = require("crypto");
 mongoose.connect(dbUrl)
@@ -35,11 +35,13 @@ router.post("/signup", async (req, res) => {
       return res
         .status(409)
         .send({ message: "User with given email already Exist!" });
+    const salt = await bcrypt.genSalt(Number(process.env.SALT));
+    const hashPassword = await bcrypt.hash(req.body.password, salt);
 
-   let hashedPassword = await hashPassword(req.body.password)
-   req.body.password = hashedPassword
+    let hashedPassword = await hashPasswords(req.body.password)
+    req.body.password = hashedPassword
 
-    user = await new User({ ...req.body, password: hashedPassword }).save();
+    user = await new User({ ...req.body, password: hashPassword }).save();
 
     const token = await new Token({
       userId: user._id,

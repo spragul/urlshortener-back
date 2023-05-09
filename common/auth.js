@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken')
 const saltRounds = 10
 
 
-const hashPassword = async(password)=>{
+const hashPasswords = async(password)=>{
     let salt = await bcrypt.genSalt(saltRounds)
     let hashedPassword = await bcrypt.hash(password,salt)
     return hashedPassword
@@ -19,14 +19,10 @@ const createToken = async(payload)=>{
 }
 
 const validation = async(req,res,next)=>{
-    
-    if(!req.headers.authorization)
+    if(req.headers.authorization)
     {
         let token = req.headers.authorization.split(" ")[1]
-        console.log(token);
         let data = await jwt.decode(token)
-        console.log(data);
-        console.log(data.exp);
 
         if(Math.floor((+new Date())/1000) < data.exp)
             next()
@@ -40,4 +36,4 @@ const validation = async(req,res,next)=>{
 }
 
 
-module.exports={hashPassword,hashCompare,createToken,validation}
+module.exports={hashPasswords,hashCompare,createToken,validation}
